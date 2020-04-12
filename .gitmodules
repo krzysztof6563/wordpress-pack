@@ -1,0 +1,6 @@
+[submodule "wp-content/themes/starter-theme"]
+	path = wp-content/themes/starter-theme
+	url = https://github.com/timber/starter-theme.git
+[submodule "wp-content/plugins/bn-dev"]
+	path = wp-content/plugins/bn-dev
+	url = git@github.com:krzysztof6563/bn-dev.git
