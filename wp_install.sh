@@ -49,6 +49,7 @@ git clone https://github.com/krzysztof6563/wordpress-pack.git
 cp wordpress-pack/.gitignore .
 cp wordpress-pack/* .
 rm wp_install.sh
+rm -r wordpress-pack/
 
 echo "[INFO] Opening website $SITE_URL in default browser"
 xdg-open $SITE_URL
