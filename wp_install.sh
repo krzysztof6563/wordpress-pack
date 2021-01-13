@@ -45,9 +45,9 @@ echo "[INFO] Adding webpack encore"
 cd wp-content/themes/timber-starter-theme
 yarn add @symfony/webpack-encore --dev
 yarn add sass sass-loader
-git clone https://github.com/krzysztof6563/wordpress-pack.git
 cp wordpress-pack/.gitignore .
 cp wordpress-pack/* .
+echo "[INFO] Tidying up"
 rm wp_install.sh
 rm -r wordpress-pack/
 
