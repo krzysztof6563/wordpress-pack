@@ -45,11 +45,11 @@ echo "[INFO] Adding webpack encore"
 cd wp-content/themes/timber-starter-theme
 yarn add @symfony/webpack-encore --dev
 yarn add sass sass-loader
-cp wordpress-pack/.gitignore .
-cp wordpress-pack/* .
+cp ../../../wordpress-pack/.gitignore .
+cp ../../../wordpress-pack/* .
 echo "[INFO] Tidying up"
 rm wp_install.sh
-rm -r wordpress-pack/
+rm -rf ../../../wordpress-pack/
 
 echo "[INFO] Opening website $SITE_URL in default browser"
 xdg-open $SITE_URL
