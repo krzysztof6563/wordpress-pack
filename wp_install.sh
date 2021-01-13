@@ -43,10 +43,18 @@ wp theme delete --all
 
 echo "[INFO] Adding webpack encore"
 cd wp-content/themes/timber-starter-theme
-yarn add @symfony/webpack-encore --dev
-yarn add sass sass-loader
+yarn add @symfony/webpack-encore --dev sass sass-loader bootstrap
 cp ../../../wordpress-pack/.gitignore .
 cp ../../../wordpress-pack/* .
+mkdir assets
+mkdir assets/css/
+touch assets/css/variables.scss
+echo "@import \"variables\";" >> assets/css/style.scss
+echo "@import \"~bootstrap/scss/bootstrap\";" >> assets/css/style.scss 
+echo "import \"./css/style.scss\";" >> assets/app.js
+mkdir build
+chmod -R 777 build
+
 echo "[INFO] Tidying up"
 rm wp_install.sh
 rm -rf ../../../wordpress-pack/
