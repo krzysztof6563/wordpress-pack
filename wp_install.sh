@@ -25,7 +25,7 @@ echo -n "Admin username: "
 read ADMIN_USERNAME
 echo -n "Admin e-mail: "
 read ADMIN_EMAIL
-wp core install --url=$SITE_URL --title=$SITE_TITLE --admin_user=$ADMIN_USERNAME --admin_email=$ADMIN_EMAIL
+wp core install --url="$SITE_URL" --title="$SITE_TITLE" --admin_user="$ADMIN_USERNAME" --admin_email="$ADMIN_EMAIL"
 
 PLUGINS=(tinymce-advanced tinymce-advanced contact-form-7 custom-field-suite custom-post-type-ui timber-library simple-page-ordering wordpress-seo)
 
