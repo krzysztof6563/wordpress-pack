@@ -45,7 +45,7 @@ Encore
     // .enableBuildNotifications()
     .enableSourceMaps(!Encore.isProduction())
     // enables hashed filenames (e.g. app.abc123.css)
-    .enableVersioning(false)
+    .enableVersioning(Encore.isProduction())
 
     // enables @babel/preset-env polyfills
     .configureBabelPresetEnv((config) => {
@@ -53,12 +53,52 @@ Encore
         config.corejs = 3;
     })
 
+    /*
+     * LOADERS 
+    */
     .enableSassLoader()
+    // .enableVueLoader()
 
+    /*
+     * FILE COPYING 
+    */
     //.copyFiles({
     //    from: "./assets/images",
-    //    to: "images/[name].[hash:8].[ext]"
+    //    to: "images/[name].[ext]"
     //})
+
+    // .copyFiles({
+    //     from: "./assets/icons",
+    //     to: "icons/[name].[ext]"
+    //  })
+
+    //  .copyFiles({
+    //     from: "./assets/fonts",
+    //     to: "fonts/[name].[ext]"
+    //  })
+ 
+    /*
+     *   BROWSER SYNC
+    */
+    //  .addPlugin(new BrowserSyncPlugin({
+    //      host: 'localhost',
+    //      port: 3000,
+    //      proxy: 'http://xxx.localhost/',
+    //      files: [
+    //          {
+    //              match: [
+    //                  '**/*.php', '**/*.twig'
+    //              ],
+    //              fn: function(event, file) {
+    //                  if (event === "change") {
+    //                      const bs = require('browser-sync').get('bs-webpack-plugin');
+    //                      bs.reload();
+    //                  }
+    //              }
+    //          }
+    //      ],
+    //      open: false,
+    //  }))
 ;
 
 module.exports = Encore.getWebpackConfig();
