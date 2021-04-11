@@ -1,0 +1,14 @@
+{% if menu %}
+	<ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll {% if isDropdown %} dropdown-menu {% endif %}
+	">
+	{% for item in items %}
+		<li class="{{ item.classes | join(' ') }} nav-item {% if item.children|length != 0 %} dropdown {% endif %} {% if isDropdown %} dropdown-item {% endif %}">
+			<a target="{{ item.target }}" href="{{ item.link }}" class="nav-link {% if item.children|length != 0 %} dropdown-toggle {% endif %}">{{ item.title }}</a>
+			{% if item.children|length != 0 %}
+				{% include "menu.twig" with {'items': item.children, isDropdown: true} %}
+			{% endif %}
+		</li>
+	{% endfor %}
+	</ul>
+{% endif %}
+
