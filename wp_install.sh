@@ -3,7 +3,7 @@
 cd ..
 
 BASEDIR="$PWD"
-PLUGINS=(tinymce-advanced contact-form-7 custom-field-suite custom-post-type-ui timber-library simple-page-ordering wordpress-seo)
+PLUGINS=(tinymce-advanced contact-form-7 custom-field-suite custom-post-type-ui timber-library simple-page-ordering wordpress-seo webp-express svg-support)
 
 
 function downloadWP() {
@@ -89,8 +89,9 @@ function installTimber() {
     echo "[INFO] Copying development files"
     cp ../../../wordpress-pack/.gitignore .
     cp -r ../../../wordpress-pack/* .
-    mkdir build
-    chmod -R 777 build
+
+    mkdir page-templates
+    mkdir templates/page-templates
     rm wp_install.sh
 }
 
