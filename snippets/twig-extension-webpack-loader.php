@@ -9,8 +9,10 @@
 class TwigWebpackLoader extends \Twig\Extension\AbstractExtension
 {
     public function __construct() {
+        $this->folder = __DIR__;
+        $this->buildPath = $this->findOption('setOutputPath');
         $this->entrypoints = $this->loadEntrypoints();
-        $this->assetsPath = $this->findAssetsPath();
+        $this->assetsPath = $this->findOption('setPublicPath');
     }
 
     /**
@@ -79,21 +81,21 @@ class TwigWebpackLoader extends \Twig\Extension\AbstractExtension
      * @return Object containing entrypoints and files
      */
     private function loadEntrypoints() {
-        return json_decode(file_get_contents(__DIR__."/../build/entrypoints.json"))->entrypoints;
+        return json_decode(file_get_contents($this->folder."/../".$this->buildPath."entrypoints.json"))->entrypoints;
     }
 
     /**
-     * Extracts path to assets from webpack.config.js in theme root directory, relative to wordpress root dir
+     * Extracts option from webpack.config.js in theme root directory
      * 
-     * @return string Path to assets
+     * @return string Value of option
      */
-    private function findAssetsPath() {
-        $webpackConfig = @file_get_contents(__DIR__."/../webpack.config.js");
+    private function findOption($optionName) {
+        $webpackConfig = @file_get_contents($this->folder."/../webpack.config.js");
         if (!$webpackConfig) {
             return;
         }
 
-        $i1 = strpos($webpackConfig, "setPublicPath") + 15;
+        $i1 = strpos($webpackConfig, $optionName) + strlen($optionName) + 2;
         $i2 = strpos($webpackConfig, ")", $i1);
         return substr($webpackConfig, $i1, $i2 - $i1 - 1);
     }
