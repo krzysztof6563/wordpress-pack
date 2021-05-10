@@ -86,6 +86,9 @@ Encore
     //      host: 'localhost',
     //      port: 3000,
     //      proxy: 'http://xxx.localhost/',
+   //       snippetOptions: {
+    //          ignorePaths: "**wp-admin/**"
+     //     },
     //      files: [
     //          {
     //              match: [
