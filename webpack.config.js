@@ -1,6 +1,6 @@
 var Encore = require('@symfony/webpack-encore');
-var webpack = require('webpack');
-var BrowserSyncPlugin = require('browser-sync-webpack-plugin')
+// var BrowserSyncPlugin = require('browser-sync-webpack-plugin')
+// var WebpackPublishPlugin = require('webpack-publish-plugin');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -104,6 +104,18 @@ Encore
     //      ],
     //      open: false,
     //  }))
+
+    // .addPlugin(new WebpackPublishPlugin({
+    //     type: "ftp",
+    //     host: "example.com",
+    //     port: 21,
+    //     username: "username",
+    //     password: "pass",
+    //     remotePath: "/web/wp-content/themes/timber-starter-theme/dist/",
+    //     log: {
+    //         info: true
+    //     }
+    // }))
 ;
 
 module.exports = Encore.getWebpackConfig();

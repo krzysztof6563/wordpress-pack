@@ -85,7 +85,8 @@ function installTimber() {
 
     echo "[INFO] Adding webpack encore"
     cd wp-content/themes/timber-starter-theme
-    yarn add @symfony/webpack-encore --dev sass sass-loader bootstrap@5 browser-sync-webpack-plugin browser-sync file-loader
+    yarn add @symfony/webpack-encore --dev sass sass-loader bootstrap@5 browser-sync-webpack-plugin browser-sync file-loader webpack-publish-plugin
+    yarn add core-js
     echo "[INFO] Copying development files"
     cp ../../../wordpress-pack/.gitignore .
     cp -r ../../../wordpress-pack/* .
