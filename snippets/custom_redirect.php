@@ -1,6 +1,6 @@
 <?php
 
-class DevLog {
+class CustomRedirect {
     public function __construct() {
         add_action('init',  [$this, 'add_rewrite_rule']);
         add_filter('query_vars',  [$this, 'whitelist_query_vars']);
