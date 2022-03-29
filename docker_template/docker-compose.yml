@@ -1,0 +1,22 @@
+version: '3.8'
+
+ 
+services:
+    db:
+        image: mariadb:10.2
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=develop_red
+        ports: 
+            - 3307:3306
+        volumes:
+          - ./docker/db:/docker-entrypoint-initdb.d
+
+    web:
+        build: .
+        ports:
+            - 8080:80
+        volumes:
+            - .:/var/www
+        depends_on: 
+            - db
