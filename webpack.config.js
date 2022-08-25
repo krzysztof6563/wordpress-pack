@@ -14,7 +14,7 @@ Encore
     // public path used by the web server to access the output path
     .setPublicPath('/wp-content/themes/timber-starter-theme/build')
     // only needed for CDN's or sub-directory deploy
-    //.setManifestKeyPrefix('build/')
+    .setManifestKeyPrefix('')
 
     /*
      * ENTRY CONFIG
@@ -66,18 +66,18 @@ Encore
     */
     //.copyFiles({
     //    from: "./assets/images",
-    //    to: "images/[name].[ext]"
+    //    to: "images/[path][name].[hash:8].[ext]"
     //})
 
     // .copyFiles({
     //     from: "./assets/icons",
-    //     to: "icons/[name].[ext]"
+    //     to: "icons/[path][name].[hash:8].[ext]"
     //  })
 
-    //  .copyFiles({
-    //     from: "./assets/fonts",
-    //     to: "fonts/[name].[ext]"
-    //  })
+    .copyFiles({
+        from: "./assets/fonts",
+        to: "fonts/[path][name].[hash:8].[ext]"
+    })
  
     /*
      *   BROWSER SYNC
