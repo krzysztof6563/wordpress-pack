@@ -13,6 +13,7 @@ class TwigWebpackLoader extends \Twig\Extension\AbstractExtension
         $this->buildPath = $this->findOption('setOutputPath');
         $this->entrypoints = $this->loadEntrypoints();
         $this->assetsPath = $this->findOption('setPublicPath');
+        $this->buildAssetMap();
     }
 
     /**
@@ -26,6 +27,13 @@ class TwigWebpackLoader extends \Twig\Extension\AbstractExtension
             new \Twig\TwigFunction('webpack_styles', [$this, 'getWebpackStyle']),
             new \Twig\TwigFunction('asset', [$this, 'assetPath']),
         ];
+    }
+
+    /**
+     * Reads manifest paths
+     */
+    public function buildAssetMap() {
+        $this->manifestPaths = json_decode(file_get_contents($this->folder."/../".$this->buildPath."manifest.json"), true);
     }
 
 
@@ -72,7 +80,7 @@ class TwigWebpackLoader extends \Twig\Extension\AbstractExtension
      * @return string Relative URL for $asset
      */
     public function assetPath($asset) {
-        return $this->assetsPath."/".$asset;
+        return $this->manifestPaths[$asset] ?? $this->assetsPath."/".$asset;
     }
     
     /**
@@ -99,4 +107,6 @@ class TwigWebpackLoader extends \Twig\Extension\AbstractExtension
         $i2 = strpos($webpackConfig, ")", $i1);
         return substr($webpackConfig, $i1, $i2 - $i1 - 1);
     }
+
+    private $manifestPaths;
 }
