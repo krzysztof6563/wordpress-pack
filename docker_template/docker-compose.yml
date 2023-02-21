@@ -26,3 +26,5 @@ services:
         depends_on: 
             - db
         dns_search: ""
+        extra_hosts:
+          - "host.docker.internal:host-gateway"
