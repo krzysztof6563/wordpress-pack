@@ -14,6 +14,7 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 
 # GD with webp only works on PHP > 7.4 
 RUN docker-php-ext-configure gd --with-webp 
+# You can add more modules if ypu need for example xdebug
 RUN docker-php-ext-install mysqli zip gd 
 
 COPY docker/apache.conf /etc/apache2/sites-enabled/000-default.conf
