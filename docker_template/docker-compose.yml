@@ -18,6 +18,11 @@ services:
             - 8080:80
         volumes:
             - .:/var/www
+            - ./docker/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+#            - ./docker/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+#            - ./docker/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
+#        environment:
+#            XDEBUG_SESSION: "vsc"
         depends_on: 
             - db
         dns_search: ""
