@@ -1,6 +1,6 @@
 <?php
 /**
- * Extension for adding basic Webpack support to wordpress.
+ * Extension for adding basic Webpack support to Twig.
  * Should be placed inside inc folder in current theme.
  *
  * @author Krzysztof Michalski <krzysztofmichalski42@gmail.com>
