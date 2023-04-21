@@ -39,7 +39,8 @@
 			<footer id="footer">
 				{% include 'footer.twig' %}
 			</footer>
-			{{ function('wp_footer') }}
 		{% endblock %}
+        {{ function('wp_footer') }}
+        {{ webpack_scripts('app') }}
 	</body>
 </html>
