@@ -2,7 +2,7 @@
 //contact form redirect
 add_action("wpcf7_before_send_mail", "redirectCF7Form");
 
-private function getMailMapping($department) {
+function getMailMapping($department) {
     #if (stristr($_SERVER['HTTP_HOST'], 'dev.example.com') !== false) {
      #   return $this->devMailing[$department] ?? false;
    # } else {
@@ -35,10 +35,10 @@ function redirectCF7Form() {
   }
 
 
-private $devMailing = [
+$devMailing = [
     "Test" => 'test@example.com',
 ];
 
-private $prodMailing = [
+$prodMailing = [
     "Department XX" => "department@example.com",
 ];
