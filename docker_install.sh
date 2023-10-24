@@ -1,9 +1,15 @@
+if ! command -v docker &> /dev/null
+then
+    echo "Docker could not be found"
+    exit 1
+fi
+
 cd ..
 if [ "$1" == "" ] 
 then
   echo "[ERROR] Missing site title"
   echo "Usage: ./docker_install.sh SITE_TITLE"
-  exit
+  exit 2
 fi
 
 echo "[INFO] Setting up docker";
@@ -27,8 +33,10 @@ docker compose exec web bash -c "wp --allow-root theme activate timber-starter-t
 docker compose exec web bash -c "rm -r wp-content/themes/twentytwenty*"
 sudo chmod -R 777 .
 
-echo -e "\nWordpress should be available at http://localhost:8080"
-echo "User: admin"
-echo -e "Password: admin\n"
+echo -e "\n\n"
 
-echo "Remember to install node dependencies via yarn install in wp-content/themes/timber-starter-theme"
+echo -e "🙌 Wordpress should be available at http://localhost:8080"
+echo "👤 User: admin"
+echo -e "🔑 Password: admin\n"
+
+echo "💿 Remember to install node dependencies via \`yarn install\` in \`wp-content/themes/timber-starter-theme\` and start webpack with \`yarn dev\`"
