@@ -3,10 +3,12 @@
 /**
  * adding CFS fields to current page/post. Add to add_to_context() fucntion
 */
-if (get_the_ID() != 0) {
-    $context['CFS']  = CFS()->get(false);
+if (function_exists("CFS")) 
+	if (get_the_ID() != 0) {
+		$context['CFS']  = CFS()->get(false);
+	}
+	$context['homeCFS']  = CFS()->get(false, get_option('page_on_front'));
 }
-$context['homeCFS']  = CFS()->get(false, get_option('page_on_front'));
 
 
 /**
