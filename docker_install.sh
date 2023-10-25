@@ -32,6 +32,10 @@ docker compose exec web bash -c "cp -r wordpress-pack/timber-starter-theme wp-co
 docker compose exec web bash -c "wp --allow-root theme activate timber-starter-theme"
 docker compose exec web bash -c "rm -r wp-content/themes/twentytwenty*"
 sudo chmod -R 777 .
+echo "Setting up homepage"
+docker compose exec web bash -c "wp --allow-root option set show_on_front page"
+docker compose exec web bash -c "wp --allow-root option set page_on_front 2"
+
 
 echo -e "\n\n"
 
