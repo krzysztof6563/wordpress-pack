@@ -4,7 +4,7 @@ RUN a2enmod rewrite
 WORKDIR /var/www
 
 RUN apt-get update \
-  && apt-get install -y libzip-dev git wget imagemagick libpng-dev libjpeg-dev libwebp-dev less curl imagemagick webp --no-install-recommends \
+  && apt-get install -y libzip-dev git wget imagemagick libpng-dev libjpeg-dev libwebp-dev less curl imagemagick webp unzip --no-install-recommends \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
