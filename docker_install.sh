@@ -23,12 +23,13 @@ docker compose exec web bash -c "wp --allow-root core download --locale=\"pl_PL\
 docker compose exec web bash -c "wp --allow-root config create --dbname=\"wordpress\" --dbuser=\"root\" --dbpass=\"root\" --dbhost=\"db\" --skip-check --force"
 docker compose exec web bash -c "wp --allow-root core install --url=\"http://localhost:8080\" --title=\"$1\" --admin_user=\"admin\" --admin_email=\"mail@example.com\" --admin_password=\"admin\""
 echo "[INFO] Installing plugins"
-PLUGINS=(tinymce-advanced contact-form-7 custom-field-suite custom-post-type-ui timber-library simple-page-ordering wordpress-seo webp-express svg-support)
+PLUGINS=(tinymce-advanced contact-form-7 custom-field-suite custom-post-type-ui simple-page-ordering wordpress-seo webp-express svg-support)
 for plugin in ${PLUGINS[*]}; do 
     docker compose exec web bash -c "wp --allow-root  plugin install $plugin --activate"; 
 done
 echo "Installing modified Timber Starter Theme"
 docker compose exec web bash -c "cp -r wordpress-pack/timber-starter-theme wp-content/themes/"
+docker compose exec web bash -c "cd wp-content/themes/timber-starter-theme && composer require timber/timber:^1.0 -n"
 docker compose exec web bash -c "wp --allow-root theme activate timber-starter-theme"
 docker compose exec web bash -c "rm -r wp-content/themes/twentytwenty*"
 sudo chmod -R 777 .
