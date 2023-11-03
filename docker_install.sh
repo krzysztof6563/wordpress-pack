@@ -29,7 +29,7 @@ for plugin in ${PLUGINS[*]}; do
 done
 echo "Installing modified Timber Starter Theme"
 docker compose exec web bash -c "cp -r wordpress-pack/timber-starter-theme wp-content/themes/"
-docker compose exec web bash -c "cd wp-content/themes/timber-starter-theme && composer require timber/timber:^1.0 -n"
+docker compose exec web bash -c "cd wp-content/themes/timber-starter-theme && composer config --no-plugins allow-plugins.composer/installers true && composer require timber/timber:^1.0 -n"
 docker compose exec web bash -c "wp --allow-root theme activate timber-starter-theme"
 docker compose exec web bash -c "rm -r wp-content/themes/twentytwenty*"
 sudo chmod -R 777 .

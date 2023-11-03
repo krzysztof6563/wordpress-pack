@@ -12,6 +12,8 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     && chmod +x wp-cli.phar \
     && mv wp-cli.phar /usr/local/bin/wp
 
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 # GD with webp only works on PHP > 7.4 
 RUN docker-php-ext-configure gd --with-webp 
 # You can add more modules if ypu need 
