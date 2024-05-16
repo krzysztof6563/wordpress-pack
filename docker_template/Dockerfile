@@ -4,13 +4,15 @@ RUN a2enmod rewrite
 WORKDIR /var/www
 
 RUN apt-get update \
-  && apt-get install -y libzip-dev git wget imagemagick libpng-dev libjpeg-dev libwebp-dev less curl imagemagick webp --no-install-recommends \
+  && apt-get install -y libzip-dev git wget imagemagick libpng-dev libjpeg-dev libwebp-dev less curl imagemagick webp unzip --no-install-recommends \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
     && chmod +x wp-cli.phar \
     && mv wp-cli.phar /usr/local/bin/wp
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # GD with webp only works on PHP > 7.4 
 RUN docker-php-ext-configure gd --with-webp 
