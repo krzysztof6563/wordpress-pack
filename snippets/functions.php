@@ -3,7 +3,7 @@
 /**
  * adding CFS fields to current page/post. Add to add_to_context() fucntion
 */
-if (function_exists("CFS")) 
+if (function_exists("CFS")) {
 	if (get_the_ID() != 0) {
 		$context['CFS']  = CFS()->get(false);
 	}
