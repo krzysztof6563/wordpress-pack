@@ -38,16 +38,19 @@ docker compose exec web bash -c "wp --allow-root plugin activate custom-field-su
 docker compose exec web bash -c "rm -r wp-content/plugins/tmp"; 
 
 echo "Installing modified Timber Starter Theme"
-docker compose exec web bash -c "cp -r wordpress-pack/timber-starter-theme wp-content/themes/"
-docker compose exec web bash -c "cd wp-content/themes/timber-starter-theme && echo '{}' > composer.json && composer config --no-plugins allow-plugins.composer/installers true && composer require timber/timber:^1.0 -n"
-docker compose exec web bash -c "wp --allow-root theme activate timber-starter-theme"
+docker compose exec web bash -c "cp -r wordpress-pack/bykon-2024 wp-content/themes/"
+docker compose exec web bash -c "cd wp-content/themes/bykon-2024 && echo '{}' > composer.json && composer config --no-plugins allow-plugins.composer/installers true && composer require timber/timber:^1.0 -n"
+docker compose exec web bash -c "wp --allow-root theme activate bykon-2024"
 docker compose exec web bash -c "rm -r wp-content/themes/twentytwenty*"
-sudo chmod -R 777 .
+sudo chmod -R 777 .chmod -r
 
 echo "Setting up homepage"
 docker compose exec web bash -c "wp --allow-root option set show_on_front page"
 docker compose exec web bash -c "wp --allow-root option set page_on_front 2"
 
+echo "Deleting default posts and comments"
+docker compose exec web bash wp --allow-root post delete $(docker compose exec web bash wp --allow-root post list --post_type=post --format=ids)
+docker compose exec web bash wp --allow-root post delete $(docker compose exec web bash wp --allow-root post list --post_type=comment --format=ids)
 
 echo -e "\n\n"
 
@@ -55,4 +58,4 @@ echo -e "🙌 Wordpress should be available at http://localhost:8080"
 echo "👤 User: admin"
 echo -e "🔑 Password: admin\n"
 
-echo "💿 Remember to install node dependencies via \`yarn install\` in \`wp-content/themes/timber-starter-theme\` and start webpack with \`yarn dev\`"
+echo "💿 Remember to install node dependencies via \`yarn install\` in \`wp-content/themes/bykon-2024\` and start webpack with \`yarn dev\`"
