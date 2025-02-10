@@ -85,7 +85,7 @@ Encore
     //  .addPlugin(new BrowserSyncPlugin({
     //      host: 'localhost',
     //      port: 3000,
-    //      proxy: 'http://xxx.localhost/',
+    //      proxy: 'http://localhost:8080/',
    //       snippetOptions: {
     //          ignorePaths: "**wp-admin/**"
      //     },
