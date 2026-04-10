@@ -22,6 +22,5 @@ services:
 #            XDEBUG_SESSION: "vsc"
         depends_on: 
             - db
-        dns_search: ""
         extra_hosts:
           - "host.docker.internal:host-gateway"
