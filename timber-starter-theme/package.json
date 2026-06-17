@@ -2,7 +2,7 @@
     "devDependencies": {
         "bootstrap": "^5",
         "sass": "1.80",
-        "vite": "^5.4.0"
+        "vite": "^7.3"
     },
     "scripts": {
         "build": "vite build",
