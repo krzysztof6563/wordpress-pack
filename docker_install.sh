@@ -26,20 +26,14 @@ docker compose exec web bash -c "wp --allow-root config create --dbname=\"wordpr
 docker compose exec web bash -c "wp --allow-root core install --url=\"http://localhost:8080\" --title=\"$1\" --admin_user=\"admin\" --admin_email=\"mail@example.com\" --admin_password=\"admin\""
 
 echo "[INFO] Installing plugins"
-PLUGINS=(tinymce-advanced contact-form-7 custom-post-type-ui simple-page-ordering wordpress-seo webp-express svg-support)
+PLUGINS=(tinymce-advanced contact-form-7 custom-post-type-ui simple-page-ordering wordpress-seo webp-express svg-support secure-custom-fields)
 for plugin in ${PLUGINS[*]}; do 
     docker compose exec web bash -c "wp --allow-root  plugin install $plugin --activate"; 
 done
-docker compose exec web bash -c "wget https://github.com/BrodNet-Internet-Applications/custom-field-suite/archive/refs/tags/2.6.7.zip -O wp-content/plugins/custom-field-suite.zip"; 
-docker compose exec web bash -c "unzip wp-content/plugins/custom-field-suite.zip -d wp-content/plugins/tmp/"; 
-docker compose exec web bash -c "mkdir -p wp-content/plugins/custom-field-suite";
-docker compose exec web bash -c "mv wp-content/plugins/tmp/custom-field-suite-*/* wp-content/plugins/custom-field-suite/";
-docker compose exec web bash -c "wp --allow-root plugin activate custom-field-suite"; 
-docker compose exec web bash -c "rm -r wp-content/plugins/tmp"; 
 
 echo "Installing modified Timber Starter Theme"
-docker compose exec web bash -c "cp -r wordpress-pack/timber-starter-theme wp-content/themes/"
-docker compose exec web bash -c "cd wp-content/themes/timber-starter-theme && echo '{}' > composer.json && composer config --no-plugins allow-plugins.composer/installers true && composer require timber/timber:^1.0 -n"
+docker compose exec web bash -c "cd wp-content/themes && composer create-project upstatement/timber-starter-theme --no-dev"
+docker compose exec web bash -c "cp -r wordpress-pack/timber-starter-theme/{*,.*} wp-content/themes/timber-starter-theme"
 docker compose exec web bash -c "wp --allow-root theme activate timber-starter-theme"
 docker compose exec web bash -c "rm -r wp-content/themes/twentytwenty*"
 sudo chmod -R 777 ../
