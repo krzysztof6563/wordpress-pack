@@ -4,3 +4,6 @@
 3. Open terminal and cd to `{projectDir}/wordpress-pack` folder
 4. Run sciprt `./docker_install.sh SIRE_TITLE` replacing last argument with choosen site's title
 5. If everything went fine wordpress should be available at [http://localhost:8080](http://localhost:8080). Username and password for databse is `root` and `root`
+
+`docker_install.sh` now sets up the Timber starter theme with a Vite production build and manifest-based asset loading.
+`docker_install_webpack.sh` preserves the previous Webpack Encore-based setup.

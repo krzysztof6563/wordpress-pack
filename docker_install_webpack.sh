@@ -8,7 +8,7 @@ cd ..
 if [ "$1" == "" ] 
 then
   echo "[ERROR] Missing site title"
-  echo "Usage: ./docker_install.sh SITE_TITLE"
+  echo "Usage: ./docker_install_webpack.sh SITE_TITLE"
   exit 2
 fi
 
@@ -31,12 +31,13 @@ for plugin in ${PLUGINS[*]}; do
     docker compose exec web bash -c "wp --allow-root  plugin install $plugin --activate"; 
 done
 
-echo "Installing Timber Starter Theme and adding vite loader"
+echo "Installing Timber Starter Theme and adding webpack loader"
 docker compose exec web bash -c "cd wp-content/themes && composer create-project upstatement/timber-starter-theme --no-dev"
 docker compose exec web bash -c "cp -r wordpress-pack/timber-starter-theme/{*,.*} wp-content/themes/timber-starter-theme"
-docker compose exec web bash -c "sed -i \"\|require_once __DIR__ . '/src/StarterSite.php';|i require_once __DIR__ . '/src/twig-extension-vite-loader.php';\" wp-content/themes/timber-starter-theme/functions.php"
-docker compose exec web bash -c "printf '%s\n' \"{{ asset_entry_styles('app') }}\" >> wp-content/themes/timber-starter-theme/views/html-header.twig"
-docker compose exec web bash -c "sed -i \"s|</body>|{{ asset_entry_scripts('app') }}\n</body>|\" wp-content/themes/timber-starter-theme/views/base.twig"
+docker compose exec web bash -c "cp wp-content/themes/timber-starter-theme/package.webpack.json wp-content/themes/timber-starter-theme/package.json"
+docker compose exec web bash -c "sed -i \"\|require_once __DIR__ . '/src/StarterSite.php';|i require_once __DIR__ . '/src/twig-extension-webpack-loader.php';\" wp-content/themes/timber-starter-theme/functions.php"
+docker compose exec web bash -c "printf '%s\n' \"{{ webpack_styles('app') }}\" >> wp-content/themes/timber-starter-theme/views/html-header.twig"
+docker compose exec web bash -c "sed -i \"s|</body>|{{ webpack_scripts('app') }}\n</body>|\" wp-content/themes/timber-starter-theme/views/base.twig"
 docker compose exec web bash -c "wp --allow-root theme activate timber-starter-theme"
 docker compose exec web bash -c "rm -r wp-content/themes/twentytwenty*"
 sudo chmod -R 777 ../
@@ -61,4 +62,4 @@ echo -e "🙌 Wordpress should be available at http://localhost:8080"
 echo "👤 User: admin"
 echo -e "🔑 Password: admin\n"
 
-echo "💿 Remember to install node dependencies via \`npm i\` in \`wp-content/themes/timber-starter-theme\` and start Vite watch mode with \`npm run dev\`"
+echo "💿 Remember to install node dependencies via \`npm i\` in \`wp-content/themes/timber-starter-theme\` and start webpack with \`npm run dev\`"

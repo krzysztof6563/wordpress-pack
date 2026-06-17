@@ -79,15 +79,16 @@ function installTimber() {
     echo "[INFO] Copying Timber theme and enabling it"
     cp -r wp-content/plugins/timber-library/timber-starter-theme/ wp-content/themes/
     cp -r wordpress-pack/timber-starter-theme/{*,.*} wp-content/themes/timber-starter-theme/
-    sed -i "\|require_once __DIR__ . '/src/StarterSite.php';|i require_once __DIR__ . '/src/twig-extension-vite-loader.php';" wp-content/themes/timber-starter-theme/functions.php
-    printf "%s\n" "{{ asset_entry_styles('app') }}" >> wp-content/themes/timber-starter-theme/views/html-header.twig
-    sed -i "s|</body>|{{ asset_entry_scripts('app') }}\n</body>|" wp-content/themes/timber-starter-theme/views/base.twig
+    cp wp-content/themes/timber-starter-theme/package.webpack.json wp-content/themes/timber-starter-theme/package.json
+    sed -i "\|require_once __DIR__ . '/src/StarterSite.php';|i require_once __DIR__ . '/src/twig-extension-webpack-loader.php';" wp-content/themes/timber-starter-theme/functions.php
+    printf "%s\n" "{{ webpack_styles('app') }}" >> wp-content/themes/timber-starter-theme/views/html-header.twig
+    sed -i "s|</body>|{{ webpack_scripts('app') }}\n</body>|" wp-content/themes/timber-starter-theme/views/base.twig
     read -p "Activate Timber Starter theme? [Y/N] " YN
     if [ "$YN" == "Y" ] || [ "$YN" == "y" ]; then
         wp theme activate timber-starter-theme  
     fi
 
-    echo "[INFO] Installing Vite dependencies"
+    echo "[INFO] Installing webpack dependencies"
     cd wp-content/themes/timber-starter-theme
     npm install
 
