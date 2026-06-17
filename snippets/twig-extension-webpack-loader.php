@@ -6,7 +6,7 @@
  * @author Krzysztof Michalski <krzysztofmichalski42@gmail.com>
  *
  */
-class TwigWebpackLoader extends \Twig\Extension\AbstractExtension {
+class TwigExtensionWebpackLoader extends \Twig\Extension\AbstractExtension {
     public function __construct() {
         $this->folder = __DIR__;
         $this->buildPath = $this->findOption('setOutputPath');
@@ -20,7 +20,7 @@ class TwigWebpackLoader extends \Twig\Extension\AbstractExtension {
      *
      * @return \Twig\TwigFunction[]
      */
-    public function getFunctions() {
+    public function getFunctions(): array {
         return [
             new \Twig\TwigFunction('webpack_scripts', [$this, 'getWebapckScript']),
             new \Twig\TwigFunction('webpack_styles', [$this, 'getWebpackStyle']),
@@ -32,8 +32,12 @@ class TwigWebpackLoader extends \Twig\Extension\AbstractExtension {
     /**
      * Reads manifest paths
      */
-    public function buildAssetMap() {
-        $this->manifestPaths = json_decode(file_get_contents($this->folder."/../".$this->buildPath."manifest.json"), true);
+    public function buildAssetMap(): void {
+        $manifest = $this->folder."/../".$this->buildPath."manifest.json";
+        $this->manifestPaths = [];
+        if (file_exists($manifest)) {
+            $this->manifestPaths = json_decode(file_get_contents($manifest), true) ?? [];
+        }
     }
 
     /**
@@ -42,9 +46,9 @@ class TwigWebpackLoader extends \Twig\Extension\AbstractExtension {
      * @param string $entryName name of entry in /build folder
      * @return string HTML fragment with <script> tags
      */
-    public function getWebapckScript($entryName) {
+    public function getWebapckScript($entryName): string {
         if (!isset($this->entrypoints->{$entryName}) || !isset($this->entrypoints->{$entryName}->js)) {
-            throw new Exception("Entypoint $entryName was not found or doesn't contain JS entries");
+            throw new Exception("Entrypoint $entryName was not found or doesn't contain JS entries. Did you run npm scripts?");
         }
 
         ob_start();
@@ -60,7 +64,7 @@ class TwigWebpackLoader extends \Twig\Extension\AbstractExtension {
      * @param string $entryName name of entry in /build folder
      * @return string HTML fragment with <link> tags
      */
-    public function getWebpackStyle($entryName) {
+    public function getWebpackStyle($entryName): string {
         if (!isset($this->entrypoints->{$entryName}) || !isset($this->entrypoints->{$entryName}->css)) {
             throw new Exception("Entypoint $entryName was not found or doesn't contain CSS entries");
         }
@@ -78,7 +82,7 @@ class TwigWebpackLoader extends \Twig\Extension\AbstractExtension {
      * @param string $asset path to asset, relative to assets folder
      * @return string Relative URL for $asset
      */
-    public function assetPath($asset) {
+    public function assetPath($asset): mixed {
         return $this->manifestPaths[$asset] ?? $this->assetsPath."/".$asset;
     }
     
@@ -88,8 +92,8 @@ class TwigWebpackLoader extends \Twig\Extension\AbstractExtension {
      * @param string $asset path to asset, relative to assets folder
      * @return string Content of file
      */
-    public function rawAsset($asset) {
-        return file_get_contents(ABSPATH . $this->assetPath($asset));
+    public function rawAsset($asset): string {
+        return file_get_contents(ABSPATH . $this->assetPath($asset)) ?? "";
     }
 
     /**
@@ -97,8 +101,13 @@ class TwigWebpackLoader extends \Twig\Extension\AbstractExtension {
      *
      * @return Object containing entrypoints and files
      */
-    private function loadEntrypoints() {
-        return json_decode(file_get_contents($this->folder."/../".$this->buildPath."entrypoints.json"))->entrypoints;
+    private function loadEntrypoints(): object {
+        $entryFile = $this->folder."/../".$this->buildPath."entrypoints.json";
+        if (file_exists($entryFile)) {
+            return json_decode(file_get_contents($entryFile))->entrypoints ?? new stdClass();
+        }
+
+        return new stdClass();
     }
 
     /**
@@ -106,7 +115,7 @@ class TwigWebpackLoader extends \Twig\Extension\AbstractExtension {
      *
      * @return string Value of option
      */
-    private function findOption($optionName) {
+    private function findOption(string $optionName) {
         $webpackConfig = @file_get_contents($this->folder."/../webpack.config.js");
         if (!$webpackConfig) {
             return;
@@ -117,5 +126,15 @@ class TwigWebpackLoader extends \Twig\Extension\AbstractExtension {
         return substr($webpackConfig, $i1, $i2 - $i1 - 1);
     }
 
-    private $manifestPaths;
+    private array $manifestPaths;
+    private string $folder;
+    private string $buildPath;
+    private object $entrypoints;
+    private string $assetsPath;
 }
+
+add_filter('timber/twig', function ($twig) {
+    $twig->addExtension(new TwigExtensionWebpackLoader());
+
+    return $twig;
+});
