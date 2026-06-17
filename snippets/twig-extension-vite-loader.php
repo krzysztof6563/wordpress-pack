@@ -7,7 +7,11 @@ class TwigExtensionViteLoader extends \Twig\Extension\AbstractExtension {
         $this->themeDirectory = rtrim(get_template_directory(), "/");
         $this->themeUri = rtrim(get_template_directory_uri(), "/");
         $this->buildUri = $this->themeUri . "/build";
+        $this->devBasePath = wp_parse_url($this->buildUri, PHP_URL_PATH) ?: "/build";
         $this->manifestPath = $this->themeDirectory . "/build/manifest.json";
+        $this->devServerUrl = rtrim($this->env("VITE_DEV_SERVER_URL", "http://localhost:5173"), "/");
+        $this->devServerInternalUrl = rtrim($this->env("VITE_DEV_SERVER_INTERNAL_URL", "http://host.docker.internal:5173"), "/");
+        $this->devServerEnabled = $this->detectDevServer();
         $this->loadManifest();
     }
 
@@ -26,6 +30,19 @@ class TwigExtensionViteLoader extends \Twig\Extension\AbstractExtension {
     }
 
     public function getEntryScripts(string $entryName): string {
+        if ($this->devServerEnabled) {
+            return implode("\n", [
+                sprintf(
+                    '<script type="module" src="%s"></script>',
+                    esc_url($this->devServerClientUrl())
+                ),
+                sprintf(
+                    '<script type="module" src="%s"></script>',
+                    esc_url($this->devServerAssetUrl($entryName))
+                ),
+            ]);
+        }
+
         $entry = $this->getEntry($entryName);
         $tags = [];
 
@@ -49,6 +66,10 @@ class TwigExtensionViteLoader extends \Twig\Extension\AbstractExtension {
     }
 
     public function getEntryStyles(string $entryName): string {
+        if ($this->devServerEnabled) {
+            return "";
+        }
+
         $entry = $this->getEntry($entryName);
         $cssFiles = [];
 
@@ -63,6 +84,10 @@ class TwigExtensionViteLoader extends \Twig\Extension\AbstractExtension {
     }
 
     public function assetPath(string $asset): string {
+        if ($this->devServerEnabled) {
+            return $this->devServerAssetUrl($asset);
+        }
+
         foreach ($this->assetCandidates($asset) as $candidate) {
             if (isset($this->manifest[$candidate]["file"])) {
                 return $this->buildUri . "/" . $this->manifest[$candidate]["file"];
@@ -73,6 +98,10 @@ class TwigExtensionViteLoader extends \Twig\Extension\AbstractExtension {
     }
 
     public function rawAsset(string $asset): string {
+        if ($this->devServerEnabled) {
+            return "";
+        }
+
         $assetUrl = $this->assetPath($asset);
         $assetPath = wp_parse_url($assetUrl, PHP_URL_PATH);
 
@@ -90,6 +119,10 @@ class TwigExtensionViteLoader extends \Twig\Extension\AbstractExtension {
 
     private function loadManifest(): void {
         $this->manifest = [];
+
+        if ($this->devServerEnabled) {
+            return;
+        }
 
         if (!file_exists($this->manifestPath)) {
             return;
@@ -109,6 +142,27 @@ class TwigExtensionViteLoader extends \Twig\Extension\AbstractExtension {
         }
 
         throw new Exception("Entrypoint {$entryName} was not found. Did you run npm scripts?");
+    }
+
+    private function detectDevServer(): bool {
+        $cacheKey = "vite_dev_server_status_" . md5($this->devServerInternalUrl);
+        $cached = get_transient($cacheKey);
+        if (false !== $cached) {
+            return "1" === $cached;
+        }
+
+        $response = wp_remote_get(
+            $this->devServerInternalClientUrl(),
+            [
+                "timeout" => 0.5,
+                "sslverify" => false,
+            ]
+        );
+
+        $isAvailable = !is_wp_error($response) && 200 === (int) wp_remote_retrieve_response_code($response);
+        set_transient($cacheKey, $isAvailable ? "1" : "0", 2);
+
+        return $isAvailable;
     }
 
     private function entryCandidates(string $entryName): array {
@@ -134,6 +188,33 @@ class TwigExtensionViteLoader extends \Twig\Extension\AbstractExtension {
         }
 
         return array_values(array_unique($candidates));
+    }
+
+    private function devServerAssetUrl(string $asset): string {
+        $assetPath = $this->normalizeAssetPath($asset);
+
+        return $this->devServerBaseUrl() . "/" . $assetPath;
+    }
+
+    private function normalizeAssetPath(string $asset): string {
+        $trimmedAsset = ltrim($asset, "/");
+        if (str_contains($trimmedAsset, ".")) {
+            return $trimmedAsset;
+        }
+
+        return "assets/{$trimmedAsset}.js";
+    }
+
+    private function devServerBaseUrl(): string {
+        return $this->devServerUrl . $this->devBasePath;
+    }
+
+    private function devServerClientUrl(): string {
+        return $this->devServerBaseUrl() . "/@vite/client";
+    }
+
+    private function devServerInternalClientUrl(): string {
+        return $this->devServerInternalUrl . $this->devBasePath . "/@vite/client";
     }
 
     private function collectImportedEntries(array $entry, array &$seen = []): array {
@@ -169,9 +250,19 @@ class TwigExtensionViteLoader extends \Twig\Extension\AbstractExtension {
         return array_values(array_unique($cssFiles));
     }
 
+    private function env(string $key, string $default): string {
+        $value = getenv($key);
+
+        return false === $value || "" === trim($value) ? $default : trim($value);
+    }
+
     private array $manifest = [];
     private string $themeDirectory;
     private string $themeUri;
     private string $buildUri;
+    private string $devBasePath;
     private string $manifestPath;
+    private string $devServerUrl;
+    private string $devServerInternalUrl;
+    private bool $devServerEnabled;
 }
